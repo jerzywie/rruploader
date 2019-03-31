@@ -39,19 +39,6 @@
           (drop drop-lines)
           (take take-lines)))))
 
-(defn format-date
-  [date]
-  (try
-    (.format (java.text.SimpleDateFormat. "EEE dd MMM") date)
-    (catch Exception e (do (println "caught ex") date))))
-
-(defn do-formatting
-  [val]
-  (let [tval (type val)]
-    (cond
-      (= java.util.Date tval) (format-date val)
-      :else val)))
-
 (defn class-list
   [& classes]
   (let [class-string (->> classes (interpose " ") (apply str) (clojure.string/trim))]
@@ -67,13 +54,10 @@
 (defn emit-html-table-rows-generic
   [parsermap table]
   (for [line table]
-    (do (prn "line:" line)
-     [:tr
-      (for [[key val] line]
-        (let [parsefn (key parsermap identity)]
-            (do
-              (prn "k:" key " v:" val)
-              [:td  (parsefn val)])))])))
+    [:tr
+     (for [[key val] line]
+       (let [parsefn (key parsermap identity)]
+         [:td  (parsefn val)]))]))
 
 (defn xls->htmltable
   [{:keys [columns styles first-line last-line header-line parsers]} file]
@@ -82,7 +66,6 @@
         hdrfn (comp emit-html-table-header (partial get-table-rows colmap header-line))
         bodyfn (comp (partial emit-html-table-rows-generic parsermap) (partial get-table-rows colmap first-line last-line))
         txfn (juxt hdrfn bodyfn)]
-    (prn "parsermap:" parsermap)
     (when (some #{:nilkey} (set (keys parsermap)))
       (throw (Exception. "All parsers must refer to columns specified in the 'columns' parameter.")))
     (->> file

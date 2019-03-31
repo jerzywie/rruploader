@@ -29,8 +29,8 @@
     :default nil]
    ["-c" "--columns COLUMNSPEC" "List of columns ('cut'-like syntax: A-D,F,H)"
     :default nil]
-   ["-p" "--parsers COLUMNPARSESPEC" "List of columns to parse in a specific way (col:parser. parsers available HHMM, TEXT. e.g. C:HHMM parses column C as a time in HH:MM format)"
-    :default ":NONE"]
+   ["-p" "--parsers COLUMNPARSESPEC" "List of columns to parse in a specific way (col:parser. parsers available HHMM, DMY, NONE. e.g. D:HHMM parses column C as a time in HH:MM format)"
+    :default "*:NONE"]
    ["-o" "--output OUTPUTTYPE" "Type of output: HTML or ICAL"
     :default "HTML"]])
 
