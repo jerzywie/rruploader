@@ -1,6 +1,6 @@
 (ns rruploader.core
-  (require [rruploader.xlshandler :as xh]
-           [clojure.tools.cli :refer [parse-opts]])
+  (:require [rruploader.xlshandler :as xh]
+            [clojure.tools.cli :refer [parse-opts]])
   (:gen-class))
 
 (defn int-parse
@@ -43,7 +43,7 @@
 
 (defn -main
   "Read Excel file with timetable details.
-   Emit HTML table."
+   Emit other data."
   [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
     (try
