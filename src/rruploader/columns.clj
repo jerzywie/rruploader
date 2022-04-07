@@ -7,6 +7,7 @@
    generate a list of keywords prepended with
    an optional identifier"
   ([start-range end-range identifier]
+   (when (> start-range end-range) (throw (Exception. "Column ranges must increase.")))
    (map #(->> % char (str identifier) keyword) (range start-range (inc end-range))))
   ([start-range end-range]
    (keyword-list start-range end-range nil)))
