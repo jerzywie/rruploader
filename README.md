@@ -1,36 +1,28 @@
 # rruploader
 
-FIXME: description
 
-## Installation
-
-Download from http://example.com/FIXME.
+Doesn't upload anything! It reads data from a spreadsheet and transforms it
 
 ## Usage
 
-FIXME: explanation
+Run the project directly, via `main-opts` (`-m rruploader.core`):
 
-    $ java -jar rruploader-0.1.0-standalone.jar [args]
+    $ clojure -M:run-m
+    
+Build an uberjar:
+
+    $ clojure -X:uberjar
+    
+Run the uberjar:
+
+    $ java -jar target/rruploader.jar [args]
 
 ## Options
 
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
+Run the program without arguments to see the usage message
 
 ## License
 
-Copyright © 2014 FIXME
+Copyright © 2022 jerzywie 
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+Distributed under the MIT Public License
