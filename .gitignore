@@ -10,4 +10,7 @@ pom.xml.asc
 .DS_Store
 *.xls*
 *.txt
-timetable-summer-2014.doc
+*.doc
+*.swp
+.#*
+.cpcache
