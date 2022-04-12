@@ -45,6 +45,7 @@
   (cond
     (= name "HHMM") p/hhmm-parser
     (= name "DMY") p/dmy-parser
+    (= name "DESC") p/description-parser
     :else p/none-parser))
 
 (defn column-parser
@@ -57,13 +58,7 @@
 (defn parsers->parsermap
   "Converts a parsers list into a map of columns to parsers
 
-   A parsers list looks like C:HHMM,D:NONE,B:OtherParser
-
-   The default parser is 'NONE'. The default value is *:NONE which
-   means 'for all columns, use NONE as the parser'
-
-   Currently defined parsers are:
-   HHMM : converts a day fraction into a time in HH:MM format (e.g. 0.75 = '18:00')"
+"
   [parsers colmap]
   (let [parse-pairs (-> parsers upper-case (split #","))
         kwd-map (apply merge (map column-parser parse-pairs))]

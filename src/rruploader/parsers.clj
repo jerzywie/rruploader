@@ -59,7 +59,8 @@
    <key-value pair>   in the format <key> (<value>)
    Return a map of the key-value pairs."
   [description]
-  (let [kvs (extract-between-delimiters description "[" "]")]
-    (->> (string/split kvs #";")
-         (map extract-kandv)
-         (apply merge))))
+  (let [kvs (extract-between-delimiters description "[" "]")
+        result (->> (string/split kvs #";")
+                    (map extract-kandv)
+                    (apply merge))]
+    result))
