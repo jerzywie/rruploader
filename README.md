@@ -17,6 +17,10 @@ Run the uberjar:
 
     $ java -jar target/rruploader.jar [args]
 
+Run tests
+
+    $ clojure -X:test:runner
+
 ## Options
 
 Run the program without arguments to see the usage message

@@ -2,24 +2,22 @@
   (:use [dk.ative.docjure.spreadsheet] :reload-all)
   (:require [rruploader
              [columns :as col]
-             [parsers :as par]]
-            [hiccup
-             [core :as h]
-             [page :as p]]
+             [parsers :as par]
+             [emitters :as em]]
             [clojure.string :as string]))
 
 (defn printnpasson-first
   "-> debug"
   [arg msg]
   (println "\n=== debug " msg "====================")
-  (println arg)
+  (prn arg)
   arg)
 
 (defn printnpasson-last
   "->> debug"
   [msg arg]
   (println "\n=== debug " msg "====================")
-  (println arg)
+  (prn arg)
   arg)
 
 (defn load-spreadsheet
@@ -38,42 +36,33 @@
      (->> sheet
           (select-columns columns)
           (drop drop-lines)
-          (take take-lines)
-          (printnpasson-last "get-table-rows")))))
+          (take take-lines)))))
+
+(defn apply-parsers
+  [header-map parser-map extra-cols-list line-map-list]
+  (for [line-map line-map-list]
+    (for [[key val] line-map]
+      (let [outkey (key header-map)
+            parsefn (key parser-map par/none-parser)]
+        (parsefn outkey val extra-cols-list)))))
 
 (defn class-list
   [& classes]
   (let [class-string (->> classes (interpose " ") (apply str) (string/trim))]
     {:class class-string}))
 
-(defn emit-html-table-header
-  [line]
-  (let [svals (vals (into (sorted-map) line))]
-      [:tr
-       (for [val svals]
-         [:th val])]))
-
-(defn emit-html-table-rows-generic
-  [parsermap table]
-  (for [line table]
-    [:tr
-     (for [[key val] line]
-       (let [parsefn (key parsermap identity)]
-         [:td  (parsefn val)]))]))
-
-(defn xls->htmltable
-  [{:keys [columns styles first-line last-line header-line parsers extra-cols]} file]
-  (prn "parsers" parsers "extra-cols" extra-cols)
+(defn xls->map
+  [{:keys [columns styles first-line last-line header-line parsers extra-cols output]} file]
   (let [colmap (col/ranges->colmap columns)
         extra-cols-list (string/split extra-cols #",")
         parsermap (col/parsers->parsermap parsers colmap)
-        hdrfn (comp emit-html-table-header (partial get-table-rows colmap header-line))
-        bodyfn (comp (partial emit-html-table-rows-generic parsermap) (partial get-table-rows colmap first-line last-line))
-        txfn (juxt hdrfn bodyfn)]
+        sheet (load-spreadsheet file)
+        header-vals (first (get-table-rows colmap header-line sheet))
+        emit-format (-> output string/lower-case keyword)]
     (when (some #{:nilkey} (set (keys parsermap)))
       (throw (Exception. "All parsers must refer to columns specified in the 'columns' parameter.")))
-    (->> file
-         load-spreadsheet
-         txfn
-         (apply conj)
-         h/html)))
+    (->> sheet
+         (get-table-rows colmap first-line last-line)
+         (apply-parsers header-vals parsermap extra-cols-list)
+         (map #(apply merge %))
+         (em/emit {:format emit-format}))))

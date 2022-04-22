@@ -1,6 +1,7 @@
 (ns rruploader.columns-test
   (:require [rruploader.columns :as sut]
-            [clojure.test :refer :all]))
+            [rruploader.parsers :as par]
+            [clojure.test :refer [deftest is testing]]))
 
 (deftest column-tests
  (testing "Column ranges"
@@ -21,3 +22,14 @@
     (is (= '(:A :B :C) (sut-keyword-list 65 67)))
     (is (thrown? Exception (sut-keyword-list 66 65)))
     (is (thrown? Exception (sut-keyword-list 70 68)))))
+
+(deftest parsers->parsermap-tests
+  (let [colmap (sut/ranges->colmap "A-C,E,G-I")]
+    (is (= {:colA par/hhmm-parser
+            :colB par/dmy-parser
+            :colC par/none-parser
+            :colE par/none-parser
+            :colG par/none-parser
+            :colH par/description-parser
+            :colI par/none-parser}
+           (sut/parsers->parsermap "A:HHMM,B:DMY,H:DESC" colmap)))))

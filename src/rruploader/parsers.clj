@@ -2,21 +2,27 @@
   (:require [clojure.string :as string]))
 
 (defn none-parser
-  [v]
-  v)
+  ([k v]
+   (none-parser k v nil))
+  ([k v param]
+   {k v}))
 
 
 (defn dmy-parser
-  [date]
-  (try
-    (.format (java.text.SimpleDateFormat. "EEE dd MMM") date)
-    (catch Exception e (do (println "Error while attempting to parse'" date "' as HHMM")))))
+  ([k date]
+   (dmy-parser k date nil))
+  ([k date param]
+   (try
+     {k (.format (java.text.SimpleDateFormat. "EEE dd MMM") date)}
+     (catch Exception e (do (println "Error while attempting to parse'" date "' as HHMM"))))))
 
 (defn hhmm-parser
-  [date]
-  (try
-    (.format (java.text.SimpleDateFormat. "HH:mm") date)
-    (catch Exception e (do (println "Error while attempting to parse'" date "' as HHMM")))))
+  ([k date]
+   (hhmm-parser k date nil))
+  ([k date param]
+   (try
+     {k (.format (java.text.SimpleDateFormat. "HH:mm") date)}
+     (catch Exception e (do (println "Error while attempting to parse'" date "' as HHMM"))))))
 
 (defn- extract-between-delimiters
   "Extract text between the lh and rh delimiters.
@@ -58,9 +64,10 @@
    <key-value list>   a list of <key-value pair> delimited with ; and surrounded with []
    <key-value pair>   in the format <key> (<value>)
    Return a map of the key-value pairs."
-  [description]
+  [k description extra-cols-list]
   (let [kvs (extract-between-delimiters description "[" "]")
-        result (->> (string/split kvs #";")
+        values (->> (string/split kvs #";")
                     (map extract-kandv)
-                    (apply merge))]
-    result))
+                    (apply merge)
+                    vals)]
+    (zipmap extra-cols-list values)))

@@ -25,18 +25,22 @@
       " This is a key ( and this is a value) we don't care about this bit"
       {"This is a key" "and this is a value"}))
 
-  (testing "description-parser"
-    (are [desc result] (= result (sut/description-parser desc))
+  (testing "description-parser-itself"
+    (are [desc xtra-cols result] (= result (sut/description-parser desc xtra-cols))
       "pre [k(v)]"
-      {"k" "v"}
+      ["a-key"]
+      {"a-key" "v"}
 
       "a longer preamble [multi word key (even more words)]"
-      {"multi word key" "even more words"}
+      ["the-keyname"]
+      {"the-keyname" "even more words"}
 
       "pre [k1(v1);k2(v2);k3(v3)]"
-      {"k1" "v1" "k2" "v2" "k3" "v3"}
+      ["k1-name" "k2-name" "k3-name"]
+      {"k1-name" "v1" "k2-name" "v2" "k3-name" "v3"}
 
       "pre pre [ first keyword ( and its value ) ; k2 ( v2) ; last one ( 10:22 )]"
-      {"first keyword" "and its value"
-       "k2" "v2"
-       "last one" "10:22"})))
+      ["first" "second" "third"]
+      {"first" "and its value"
+       "second" "v2"
+       "third" "10:22"})))

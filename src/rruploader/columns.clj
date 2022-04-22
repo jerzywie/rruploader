@@ -57,9 +57,12 @@
 
 (defn parsers->parsermap
   "Converts a parsers list into a map of columns to parsers
-
-"
+   A parsers list looks like C:HHMM,D:NONE,G:DESC
+   Any columns without parsers are assigned to the default none-parser."
   [parsers colmap]
   (let [parse-pairs (-> parsers upper-case (split #","))
-        kwd-map (apply merge (map column-parser parse-pairs))]
-    (zipmap (map #(colmap % :nilkey) (keys kwd-map)) (vals kwd-map))))
+        parser-map (apply merge (map column-parser parse-pairs))
+        all-keys (vals colmap)
+        all-vals (map (fn [k] (get parser-map k p/none-parser)) (keys colmap))]
+    (zipmap all-keys all-vals)))
+

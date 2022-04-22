@@ -66,5 +66,5 @@
         (< (count arguments) 1) (cli-help "[spreadsheet-file-name must be supplied]" summary parser-help)
         errors (cli-help errors summary parser-help)
         (nil? (:columns options)) (cli-help "--columns must be used to specify the columns to process" summary)
-        :else (println (xh/xls->htmltable options (first arguments))))
-      (catch Exception e (cli-help (str "[" (.getMessage e) "]") summary parser-help)))))
+        :else (println (xh/xls->map options (first arguments))))
+      (catch Exception e (println (str "[" (.toString e) "]"))))))
