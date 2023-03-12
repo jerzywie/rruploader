@@ -67,4 +67,5 @@
         errors (cli-help errors summary parser-help)
         (nil? (:columns options)) (cli-help "--columns must be used to specify the columns to process" summary)
         :else (println (xh/xls->map options (first arguments))))
-      (catch Exception e (println (str "[" (.toString e) "]"))))))
+      (catch Exception e (do (println (str "[" (.toString e) "] " ))
+                             (.printStackTrace e))))))
