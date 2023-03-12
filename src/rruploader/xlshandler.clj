@@ -54,7 +54,7 @@
 (defn xls->map
   [{:keys [columns styles first-line last-line header-line parsers extra-cols output]} file]
   (let [colmap (col/ranges->colmap columns)
-        extra-cols-list (string/split extra-cols #",")
+        extra-cols-list (if extra-cols (string/split extra-cols #",") nil)
         parsermap (col/parsers->parsermap parsers colmap)
         sheet (load-spreadsheet file)
         header-vals (first (get-table-rows colmap header-line sheet))
